@@ -53,8 +53,8 @@ DecoupledEditor.builtinPlugins = [
 	Strikethrough,
 	Underline,
 	BlockQuote,
-	CKFinder,
-	EasyImage,
+	// CKFinder,
+	// EasyImage,
 	Heading,
 	Image,
 	ImageCaption,
@@ -70,7 +70,7 @@ DecoupledEditor.builtinPlugins = [
 	PasteFromOffice,
 	Table,
 	TableToolbar,
-	SimpleUploadAdapter,
+	SimpleUploadAdapter
 ];
 
 // Editor configuration.
@@ -128,5 +128,8 @@ DecoupledEditor.defaultConfig = {
 		]
 	},
 	// This value must be kept in sync with the language defined in webpack.config.js.
-	language: 'en'
+	language: 'en',
+	simpleUpload: {
+		uploadUrl: 'fake',
+	},
 };
