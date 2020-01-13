@@ -77,6 +77,7 @@ DecoupledEditor.builtinPlugins = [
 DecoupledEditor.defaultConfig = {
 	toolbar: {
 		items: [
+			'imageUpload',
 			'heading',
 			'|',
 			'fontsize',
@@ -98,7 +99,6 @@ DecoupledEditor.defaultConfig = {
 			'|',
 			'link',
 			'blockquote',
-			'imageUpload',
 			'insertTable',
 			'mediaEmbed',
 			'|',
