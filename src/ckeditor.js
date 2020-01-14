@@ -51,14 +51,16 @@ class S3AdapterPlugin extends Plugin {
 
 		this.editor = editor;
 
-		const url = this.editor.config.get( 'S3Upload.policyUrl' );
+		const config = this.editor.config.get( 'S3Upload' );
+
+		const url = config.policyUrl;
 
 		if ( !url ) {
 			console.warn( 'S3Upload.policyUrl is not configured' ); // eslint-disable-line no-undef
 			return;
 		}
 
-		const mapUrl = this.editor.config.get( 's3Upload.mapUrl' );
+		const mapUrl = config.mapUrl;
 
 		editor.plugins.get( 'FileRepository' ).createUploadAdapter = loader => {
 			return new S3Adapter( loader, url, mapUrl );
@@ -158,5 +160,6 @@ DecoupledEditor.defaultConfig = {
 	language: 'en',
 	S3Upload: {
 		policyUrl: 'http://mta.mls.local/slate-api/uploads/ckeditor',
+		mapUrl: ( { location } ) => location,
 	},
 };

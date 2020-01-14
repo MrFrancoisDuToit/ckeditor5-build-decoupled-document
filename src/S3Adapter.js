@@ -4,6 +4,7 @@ export default class S3Adapter {
 		this.url = url;
 		this.mapUrl = mapUrl || ( ( { location } ) => location );
 		this.file = undefined;
+		this.path = undefined;
 		this.uploadedUrl = undefined;
 	}
 
@@ -70,7 +71,8 @@ export default class S3Adapter {
 			xhr.withCredentials = false;
 			xhr.responseType = 'json';
 
-			this.uploadedUrl = `${ s3creds.endpoint_url }/${ s3creds.params.key.replace( '${filename}', this.file.name ) }`;
+			this.path = s3creds.params.key.replace( '${filename}', this.file.name );
+			this.uploadedUrl = `${ s3creds.endpoint_url }/${ this.path }`;
 
 			xhr.addEventListener( 'error', () => reject( 's3err' ) );
 			xhr.addEventListener( 'abort', () => reject( 's3abort' ) );
@@ -79,7 +81,7 @@ export default class S3Adapter {
 					return reject( 'There was a problem uploading the file.' );
 				}
 
-				resolve( { default: this.mapUrl( { location: this.uploadedUrl } ) } );
+				resolve( { default: this.mapUrl( { location: this.uploadedUrl, file: this.file, path: this.path } ) } );
 			} );
 
 			if ( xhr.upload ) {
