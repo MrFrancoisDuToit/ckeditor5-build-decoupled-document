@@ -3,6 +3,8 @@ export default class S3Adapter {
 		this.loader = loader;
 		this.url = url;
 		this.mapUrl = mapUrl || ( ( { location } ) => location );
+		this.file = undefined;
+		this.uploadedUrl = undefined;
 	}
 
 	upload() {
@@ -17,7 +19,8 @@ export default class S3Adapter {
 
 	getCredentials() {
 		return new Promise( async ( resolve, reject ) => {
-			const filename = ( await this.loader.file ).name;
+			this.file = await this.loader.file;
+			const filename = this.file.name;
 
 			if ( !filename ) {
 				return reject( 'No filename found' );
@@ -58,40 +61,29 @@ export default class S3Adapter {
 				data.append( param, s3creds.params[ param ] );
 			}
 
-			data.append( 'Content-Type', this.loader.file.type );
+			data.append( 'Content-Type', this.file.type );
 
-			data.append( 'file', this.loader.file );
+			data.append( 'file', this.file );
 
 			const xhr = this.xhr = new XMLHttpRequest(); // eslint-disable-line no-undef
 
 			xhr.withCredentials = false;
-			xhr.responseType = 'document';
+			xhr.responseType = 'json';
+
+			this.uploadedUrl = `${s3creds.endpoint_url}/${s3creds.params.key.replace('${filename}', this.file.name)}`;
 
 			xhr.addEventListener( 'error', () => reject( 's3err' ) );
 			xhr.addEventListener( 'abort', () => reject( 's3abort' ) );
 			xhr.addEventListener( 'load', () => {
-				const res = xhr.response;
-
-				if ( !res ) {
-					return reject( 'No Response' );
-				}
-
 				if ( res.querySelector( 'Error' ) ) {
-					return reject( res.querySelector( 'Code' ).textContent + ': ' + res.querySelector( 'Message' ).textContent );
+				 	return reject( res.querySelector( 'Code' ).textContent + ': ' + res.querySelector( 'Message' ).textContent );
 				}
 
-				const info = {
-					location: res.querySelector( 'Location' ).textContent,
-					bucket: res.querySelector( 'Bucket' ).textContent,
-					key: res.querySelector( 'Key' ).textContent,
-					etag: res.querySelector( 'ETag' ).textContent
-				};
-
-				if ( !info.location ) {
-					return reject( 'NoLocation: No location in s3 POST response' );
+				if (res.status !== 204) {
+					return reject( 'There was a problem uploading the file.' );
 				}
 
-				resolve( { default: this.mapUrl( info ) } );
+				resolve( { default: this.mapUrl( { location: this.uploadedUrl } ) } );
 			} );
 
 			if ( xhr.upload ) {
