@@ -35,10 +35,37 @@ import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
 import PasteFromOffice from '@ckeditor/ckeditor5-paste-from-office/src/pastefromoffice';
 import Table from '@ckeditor/ckeditor5-table/src/table';
 import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar';
-import SimpleUploadAdapter from '@ckeditor/ckeditor5-upload/src/adapters/simpleuploadadapter';
-import s3Upload from 'ckeditor5-sss-upload/src/s3upload';
+
+import S3Adapter from './S3Adapter';
+import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 
 export default class DecoupledEditor extends DecoupledEditorBase {}
+
+class S3AdapterPlugin extends Plugin {
+
+	static get pluginName() {
+        return 'S3Upload';
+    }
+
+	constructor(editor) {
+		super();
+
+		this.editor = editor;
+
+		const url = this.editor.config.get('S3Upload.policyUrl');
+
+		if (!url) {
+			console.warn('S3Upload.policyUrl is not configured')
+			return;
+		}
+
+		const mapUrl = this.editor.config.get('s3Upload.mapUrl');
+
+		editor.plugins.get( 'FileRepository' ).createUploadAdapter = ( loader ) => {
+			return new S3Adapter( loader, url, mapUrl );
+		};
+	}
+}
 
 // Plugins to include in the build.
 DecoupledEditor.builtinPlugins = [
@@ -71,9 +98,12 @@ DecoupledEditor.builtinPlugins = [
 	PasteFromOffice,
 	Table,
 	TableToolbar,
-	SimpleUploadAdapter,
-	s3Upload
+	S3AdapterPlugin
 ];
+
+// DecoupledEditor.extraPlugins = [
+// 	S3AdapterPlugin,
+// ];
 
 // Editor configuration.
 DecoupledEditor.defaultConfig = {
@@ -131,11 +161,7 @@ DecoupledEditor.defaultConfig = {
 	},
 	// This value must be kept in sync with the language defined in webpack.config.js.
 	language: 'en',
-	simpleUpload: {
-		uploadUrl: 'fake',
+	S3Upload: {
+		policyUrl: 'test',	
 	},
-	s3Upload: {
-		policyUrl: '',
-		mapUrl: ( { location } ) => location,
-	}
 };
