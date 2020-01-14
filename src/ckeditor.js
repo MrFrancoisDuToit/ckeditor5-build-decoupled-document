@@ -42,26 +42,25 @@ import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 export default class DecoupledEditor extends DecoupledEditorBase {}
 
 class S3AdapterPlugin extends Plugin {
-
 	static get pluginName() {
-        return 'S3Upload';
-    }
+		return 'S3Upload';
+	}
 
-	constructor(editor) {
+	constructor( editor ) {
 		super();
 
 		this.editor = editor;
 
-		const url = this.editor.config.get('S3Upload.policyUrl');
+		const url = this.editor.config.get( 'S3Upload.policyUrl' );
 
-		if (!url) {
-			console.warn('S3Upload.policyUrl is not configured')
+		if ( !url ) {
+			console.warn( 'S3Upload.policyUrl is not configured' ); // eslint-disable-line no-undef
 			return;
 		}
 
-		const mapUrl = this.editor.config.get('s3Upload.mapUrl');
+		const mapUrl = this.editor.config.get( 's3Upload.mapUrl' );
 
-		editor.plugins.get( 'FileRepository' ).createUploadAdapter = ( loader ) => {
+		editor.plugins.get( 'FileRepository' ).createUploadAdapter = loader => {
 			return new S3Adapter( loader, url, mapUrl );
 		};
 	}
@@ -100,10 +99,6 @@ DecoupledEditor.builtinPlugins = [
 	TableToolbar,
 	S3AdapterPlugin
 ];
-
-// DecoupledEditor.extraPlugins = [
-// 	S3AdapterPlugin,
-// ];
 
 // Editor configuration.
 DecoupledEditor.defaultConfig = {
@@ -162,6 +157,6 @@ DecoupledEditor.defaultConfig = {
 	// This value must be kept in sync with the language defined in webpack.config.js.
 	language: 'en',
 	S3Upload: {
-		policyUrl: 'test',	
+		policyUrl: 'http://mta.mls.local/slate-api/uploads/ckeditor',
 	},
 };

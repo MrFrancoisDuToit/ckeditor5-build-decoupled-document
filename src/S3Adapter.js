@@ -1,106 +1,112 @@
 export default class S3Adapter {
-    constructor(loader, url, mapUrl) {
-        console.log(loader);
-        console.log(url);
-        this.loader = loader;
-        this.url = url;
-        this.mapUrl = mapUrl || (({ location }) => location);
-    }
+	constructor( loader, url, mapUrl ) {
+		this.loader = loader;
+		this.url = url;
+		this.mapUrl = mapUrl || ( ( { location } ) => location );
+	}
 
-    upload() {
-        return this.getCredentials().then(this.uploadImage.bind(this));
-    }
+	upload() {
+		return this.getCredentials().then( this.uploadImage.bind( this ) );
+	}
 
-    abort() {
-        if (this.xhr) this.xhr.abort();
-    }
+	abort() {
+		if ( this.xhr ) {
+			this.xhr.abort();
+		}
+	}
 
-    getCredentials() {
-        return new Promise(async (resolve, reject) => {
+	getCredentials() {
+		return new Promise( async ( resolve, reject ) => {
+			const filename = ( await this.loader.file ).name;
 
-            var filename = (await this.loader.file).name;
+			if ( !filename ) {
+				return reject( 'No filename found' );
+			}
 
-            if (!filename) return reject('No filename found');
+			const xhr = new XMLHttpRequest(); // eslint-disable-line no-undef
 
-            var xhr = new XMLHttpRequest();
-            
-            xhr.withCredentials = true;
-            xhr.open('GET', this.url + '?filename=' + filename, true);
-            xhr.responseType = 'json';
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            
-            xhr.addEventListener('error', err => reject('crederr'));
-            xhr.addEventListener('abort', err => reject('credabort'));
-            xhr.addEventListener('load', function () {
-                var res = xhr.response;
-                
-                if (!res) return reject('No response from s3 creds url');
+			xhr.withCredentials = true;
+			xhr.open( 'POST', this.url + '?filename=' + filename, true );
+			xhr.responseType = 'json';
+			xhr.setRequestHeader( 'Content-Type', 'application/json' );
 
-                resolve(res);
-            });
+			xhr.addEventListener( 'error', () => reject( 'crederr' ) );
+			xhr.addEventListener( 'abort', () => reject( 'credabort' ) );
+			xhr.addEventListener( 'load', function() {
+				const res = xhr.response;
 
-            xhr.send();
+				if ( !res ) {
+					return reject( 'No response from s3 creds url' );
+				}
 
-        });
-    }
+				resolve( res );
+			} );
 
-    uploadImage(s3creds) {
-        return new Promise((resolve, reject) => {
+			xhr.send();
+		} );
+	}
 
-            var data = new FormData();
+	uploadImage( s3creds ) {
+		return new Promise( ( resolve, reject ) => {
+			const data = new FormData(); // eslint-disable-line no-undef
 
-            for (var param in s3creds.params) {
-                if (!s3creds.params.hasOwnProperty(param)) continue;
+			for ( const param in s3creds.params ) {
+				if ( !s3creds.params.hasOwnProperty( param ) ) {
+					continue;
+				}
 
-                data.append(param, s3creds.params[param]);
-            }
+				data.append( param, s3creds.params[ param ] );
+			}
 
-            data.append('Content-Type', this.loader.file.type)
+			data.append( 'Content-Type', this.loader.file.type );
 
-            data.append('file', this.loader.file);
-            
-            var xhr = this.xhr = new XMLHttpRequest();
-            
-            xhr.withCredentials = false;
-            xhr.responseType = 'document';
-            
-            xhr.addEventListener('error', err => reject('s3err'));
-            xhr.addEventListener('abort', err => reject('s3abort'));
-            xhr.addEventListener('load', () => {
-                const res = xhr.response;
-                
-                if (!res) return reject('No Response');
-    
-                if (res.querySelector('Error')) {
-                    return reject(res.querySelector('Code').textContent + ': ' + res.querySelector('Message').textContent);
-                }
+			data.append( 'file', this.loader.file );
 
-                const info = {
-                    location: res.querySelector('Location').textContent,
-                    bucket: res.querySelector('Bucket').textContent,
-                    key: res.querySelector('Key').textContent,
-                    etag: res.querySelector('ETag').textContent
-                };
+			const xhr = this.xhr = new XMLHttpRequest(); // eslint-disable-line no-undef
 
-                if (!info.location) {
-                    return reject('NoLocation: No location in s3 POST response');
-                }
+			xhr.withCredentials = false;
+			xhr.responseType = 'document';
 
-                resolve({ default: this.mapUrl(info) });
-            });
+			xhr.addEventListener( 'error', () => reject( 's3err' ) );
+			xhr.addEventListener( 'abort', () => reject( 's3abort' ) );
+			xhr.addEventListener( 'load', () => {
+				const res = xhr.response;
 
-            if (xhr.upload) {
-                xhr.upload.addEventListener('progress', e => {
-                    if (!e.lengthComputable) return;
-                    
-                    this.loader.uploadTotal = e.total;
-                    this.loader.uploaded = e.loaded;
-                });
-            }
+				if ( !res ) {
+					return reject( 'No Response' );
+				}
 
-            xhr.open('POST', s3creds.endpoint_url, true);
-            xhr.send(data);
+				if ( res.querySelector( 'Error' ) ) {
+					return reject( res.querySelector( 'Code' ).textContent + ': ' + res.querySelector( 'Message' ).textContent );
+				}
 
-        });
-    }
-}	
+				const info = {
+					location: res.querySelector( 'Location' ).textContent,
+					bucket: res.querySelector( 'Bucket' ).textContent,
+					key: res.querySelector( 'Key' ).textContent,
+					etag: res.querySelector( 'ETag' ).textContent
+				};
+
+				if ( !info.location ) {
+					return reject( 'NoLocation: No location in s3 POST response' );
+				}
+
+				resolve( { default: this.mapUrl( info ) } );
+			} );
+
+			if ( xhr.upload ) {
+				xhr.upload.addEventListener( 'progress', e => {
+					if ( !e.lengthComputable ) {
+						return;
+					}
+
+					this.loader.uploadTotal = e.total;
+					this.loader.uploaded = e.loaded;
+				} );
+			}
+
+			xhr.open( 'POST', s3creds.endpoint_url, true );
+			xhr.send( data );
+		} );
+	}
+}
