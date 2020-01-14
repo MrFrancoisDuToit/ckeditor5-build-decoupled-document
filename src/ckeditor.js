@@ -36,6 +36,7 @@ import PasteFromOffice from '@ckeditor/ckeditor5-paste-from-office/src/pastefrom
 import Table from '@ckeditor/ckeditor5-table/src/table';
 import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar';
 import SimpleUploadAdapter from '@ckeditor/ckeditor5-upload/src/adapters/simpleuploadadapter';
+import s3Upload from 'ckeditor5-sss-upload/src/s3upload';
 
 export default class DecoupledEditor extends DecoupledEditorBase {}
 
@@ -70,14 +71,14 @@ DecoupledEditor.builtinPlugins = [
 	PasteFromOffice,
 	Table,
 	TableToolbar,
-	SimpleUploadAdapter
+	SimpleUploadAdapter,
+	s3Upload
 ];
 
 // Editor configuration.
 DecoupledEditor.defaultConfig = {
 	toolbar: {
 		items: [
-			'imageUpload',
 			'heading',
 			'|',
 			'fontsize',
@@ -99,6 +100,7 @@ DecoupledEditor.defaultConfig = {
 			'|',
 			'link',
 			'blockquote',
+			'imageUpload',
 			'insertTable',
 			'mediaEmbed',
 			'|',
@@ -132,4 +134,8 @@ DecoupledEditor.defaultConfig = {
 	simpleUpload: {
 		uploadUrl: 'fake',
 	},
+	s3Upload: {
+		policyUrl: '',
+		mapUrl: ( { location } ) => location,
+	}
 };
