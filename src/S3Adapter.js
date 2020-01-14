@@ -70,16 +70,12 @@ export default class S3Adapter {
 			xhr.withCredentials = false;
 			xhr.responseType = 'json';
 
-			this.uploadedUrl = `${s3creds.endpoint_url}/${s3creds.params.key.replace('${filename}', this.file.name)}`;
+			this.uploadedUrl = `${ s3creds.endpoint_url }/${ s3creds.params.key.replace( '${filename}', this.file.name ) }`;
 
 			xhr.addEventListener( 'error', () => reject( 's3err' ) );
 			xhr.addEventListener( 'abort', () => reject( 's3abort' ) );
 			xhr.addEventListener( 'load', () => {
-				if ( res.querySelector( 'Error' ) ) {
-				 	return reject( res.querySelector( 'Code' ).textContent + ': ' + res.querySelector( 'Message' ).textContent );
-				}
-
-				if (res.status !== 204) {
+				if ( xhr.status !== 204 ) {
 					return reject( 'There was a problem uploading the file.' );
 				}
 
