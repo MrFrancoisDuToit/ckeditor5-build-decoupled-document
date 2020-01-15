@@ -9,8 +9,10 @@ import DecoupledEditorBase from '@ckeditor/ckeditor5-editor-decoupled/src/decoup
 import Essentials from '@ckeditor/ckeditor5-essentials/src/essentials';
 import Alignment from '@ckeditor/ckeditor5-alignment/src/alignment';
 import FontSize from '@ckeditor/ckeditor5-font/src/fontsize';
+import FontColor from '@ckeditor/ckeditor5-font/src/fontcolor';
 import FontFamily from '@ckeditor/ckeditor5-font/src/fontfamily';
-import Highlight from '@ckeditor/ckeditor5-highlight/src/highlight';
+// import Highlight from '@ckeditor/ckeditor5-highlight/src/highlight';
+import HorizontalLine from '@ckeditor/ckeditor5-horizontal-line/src/horizontalline';
 import UploadAdapter from '@ckeditor/ckeditor5-adapter-ckfinder/src/uploadadapter';
 import Autoformat from '@ckeditor/ckeditor5-autoformat/src/autoformat';
 import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold';
@@ -33,8 +35,8 @@ import List from '@ckeditor/ckeditor5-list/src/list';
 import MediaEmbed from '@ckeditor/ckeditor5-media-embed/src/mediaembed';
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
 import PasteFromOffice from '@ckeditor/ckeditor5-paste-from-office/src/pastefromoffice';
-import Table from '@ckeditor/ckeditor5-table/src/table';
-import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar';
+// import Table from '@ckeditor/ckeditor5-table/src/table';
+// import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar';
 
 import S3Adapter from './S3Adapter';
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
@@ -74,7 +76,8 @@ DecoupledEditor.builtinPlugins = [
 	Alignment,
 	FontSize,
 	FontFamily,
-	Highlight,
+	FontColor,
+	// Highlight,
 	UploadAdapter,
 	Autoformat,
 	Bold,
@@ -85,6 +88,7 @@ DecoupledEditor.builtinPlugins = [
 	// CKFinder,
 	// EasyImage,
 	Heading,
+	HorizontalLine,
 	Image,
 	ImageCaption,
 	ImageStyle,
@@ -97,9 +101,10 @@ DecoupledEditor.builtinPlugins = [
 	MediaEmbed,
 	Paragraph,
 	PasteFromOffice,
-	Table,
-	TableToolbar,
-	S3AdapterPlugin
+	// Table,
+	// TableToolbar,
+
+	S3AdapterPlugin,
 ];
 
 // Editor configuration.
@@ -116,6 +121,7 @@ DecoupledEditor.defaultConfig = {
 			'underline',
 			'strikethrough',
 			// 'highlight',
+			'fontcolor',
 			'|',
 			'alignment',
 			'|',
@@ -123,7 +129,8 @@ DecoupledEditor.defaultConfig = {
 			'link',
 			'blockquote',
 			// 'insertTable',
-			// 'mediaEmbed',
+			'mediaEmbed',
+			'horizontalLine',
 			'|',
 			'numberedList',
 			'bulletedList',
@@ -161,5 +168,8 @@ DecoupledEditor.defaultConfig = {
 	S3Upload: {
 		policyUrl: 'http://mta.mls.local/slate-api/uploads/ckeditor',
 		mapUrl: ( { location } ) => location,
+	},
+	mediaEmbed: {
+		previewsInData: true,
 	},
 };
