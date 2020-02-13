@@ -1,11 +1,13 @@
 export default class S3Adapter {
-	constructor( loader, url, mapUrl ) {
+	constructor( loader, url, mapUrl, modelId, modelType ) {
 		this.loader = loader;
 		this.url = url;
 		this.mapUrl = mapUrl || ( ( { location } ) => location );
 		this.file = undefined;
 		this.path = undefined;
 		this.uploadedUrl = undefined;
+		this.modelId = modelId;
+		this.modelType = modelType;
 	}
 
 	upload() {
@@ -30,7 +32,8 @@ export default class S3Adapter {
 			const xhr = new XMLHttpRequest(); // eslint-disable-line no-undef
 
 			xhr.withCredentials = true;
-			xhr.open( 'POST', this.url + '?filename=' + filename, true );
+			xhr.open( 'POST', this.url +
+				`?filename=${ filename }&model_id=${ this.modelId || '' }&model_type=${ this.modelType || '' }`, true );
 			xhr.responseType = 'json';
 			xhr.setRequestHeader( 'Content-Type', 'application/json' );
 

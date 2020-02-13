@@ -64,8 +64,12 @@ class S3AdapterPlugin extends Plugin {
 
 		const mapUrl = config.mapUrl;
 
+		const modelId = config.modelId;
+
+		const modelType = config.modelType;
+
 		editor.plugins.get( 'FileRepository' ).createUploadAdapter = loader => {
-			return new S3Adapter( loader, url, mapUrl );
+			return new S3Adapter( loader, url, mapUrl, modelId, modelType );
 		};
 	}
 }
