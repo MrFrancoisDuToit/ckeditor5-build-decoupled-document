@@ -40,6 +40,7 @@ import PasteFromOffice from '@ckeditor/ckeditor5-paste-from-office/src/pastefrom
 
 import S3Adapter from './S3Adapter';
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
+import CodeBlock from '@ckeditor/ckeditor5-code-block/src/codeblock';
 
 export default class DecoupledEditor extends DecoupledEditorBase {}
 
@@ -109,6 +110,7 @@ DecoupledEditor.builtinPlugins = [
 	// TableToolbar,
 
 	S3AdapterPlugin,
+	CodeBlock,
 ];
 
 // Editor configuration.
@@ -143,7 +145,9 @@ DecoupledEditor.defaultConfig = {
 			'outdent',
 			'|',
 			'undo',
-			'redo'
+			'redo',
+			'|',
+			'codeblock',
 		]
 	},
 	image: {
@@ -175,5 +179,14 @@ DecoupledEditor.defaultConfig = {
 	},
 	mediaEmbed: {
 		previewsInData: true,
+	},
+	codeBlock: {
+		languages: [
+			{ language: 'plaintext', label: 'Plain text' },
+			{ language: 'css', label: 'CSS' },
+			{ language: 'xml', label: 'HTML/XML' },
+			{ language: 'javascript', label: 'JavaScript' },
+			{ language: 'php', label: 'PHP' },
+		],
 	},
 };

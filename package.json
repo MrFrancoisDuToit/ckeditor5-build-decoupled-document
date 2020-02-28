@@ -98,6 +98,7 @@
     }
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-code-block": "^17.0.0",
     "@ckeditor/ckeditor5-horizontal-line": "^16.0.0",
     "@ckeditor/ckeditor5-upload": "^16.0.0",
     "ckeditor5-sss-upload": "^1.1.0"
