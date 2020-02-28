@@ -110,7 +110,7 @@ DecoupledEditor.builtinPlugins = [
 	// TableToolbar,
 
 	S3AdapterPlugin,
-	CodeBlock,
+	CodeBlock
 ];
 
 // Editor configuration.
@@ -147,7 +147,7 @@ DecoupledEditor.defaultConfig = {
 			'undo',
 			'redo',
 			'|',
-			'codeblock',
+			'codeBlock'
 		]
 	},
 	image: {
@@ -175,10 +175,10 @@ DecoupledEditor.defaultConfig = {
 	language: 'en',
 	S3Upload: {
 		policyUrl: 'http://mta.mls.local/slate-api/uploads/ckeditor',
-		mapUrl: ( { location } ) => location,
+		mapUrl: ( { location } ) => location
 	},
 	mediaEmbed: {
-		previewsInData: true,
+		previewsInData: true
 	},
 	codeBlock: {
 		languages: [
@@ -186,7 +186,7 @@ DecoupledEditor.defaultConfig = {
 			{ language: 'css', label: 'CSS' },
 			{ language: 'xml', label: 'HTML/XML' },
 			{ language: 'javascript', label: 'JavaScript' },
-			{ language: 'php', label: 'PHP' },
-		],
-	},
+			{ language: 'php', label: 'PHP' }
+		]
+	}
 };
